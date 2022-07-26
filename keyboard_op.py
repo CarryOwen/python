@@ -22,10 +22,11 @@ def test_all():
 op=Dispatch("op.opsoft")
 #run all test
 print("test begin");
-# while True :
-co=op.FindMultiColor(345,179,1259,883,'05fc81','20|15|16c861-163632',1,0)
-print(co[1]/1.25,co[2]/1.25,co)
-op.MoveTo(co[1],co[2])
+while True :
+    co=op.FindMultiColor(0,0,1259,1080,'05fc81','20|15|16c861-163632',1,0)
+    print(co[1]/1.25,co[2]/1.25,co)
+    if co[1]>=0:
+        op.MoveTo(co[1],co[2])
         # time.sleep(1)
 print("test end");
 
