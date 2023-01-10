@@ -1,32 +1,71 @@
 
 from win32com.client import Dispatch
 import time
-class Demo:
-    def __init__(self):
-        #创建com对象
-        self.op=op=Dispatch("op.opsoft");
-        # self.op.SetPath(R"C:\Users\YWOU\Desktop")
-        # self.hwnd=0;
-        # self.send_hwnd=0;
-        print("init");
-    def findBloodFog(self):
-        co=self.op.FindMultiColor(1,38,359,357,'0156d6','-3|0|bbdffb,-2|5|ed453b,5|7|02d503,12|6|516e78',1,0)
-        print(co[1]/1.25,co[2]/1.25,co)
-        self.op.MoveTo(co[1]/1.25,co[2]/1.25)
-        
-def test_all():
-    demo=Demo();
-    demo.findBloodFog();
+import commandSend as mouse
+from ctypes.wintypes import HWND, POINT
+from ctypes import c_ulong, windll, byref
+getMousePos = windll.user32.GetCursorPos
+from ctypes import *
+import sys, os
+import threading
+dd_dll = windll.LoadLibrary('D:\DD94687.64.dll')
+time.sleep(2)
+st = dd_dll.DD_btn(0) #DD Initialize
+op = Dispatch("op.opsoft")
 
-    return 0;
-op=Dispatch("op.opsoft")
-#run all test
-print("test begin");
-while True :
-    co=op.FindMultiColor(0,0,1259,1080,'05fc81','20|15|16c861-163632',1,0)
-    print(co[1]/1.25,co[2]/1.25,co)
-    if co[1]>=0:
-        op.MoveTo(co[1],co[2])
-        # time.sleep(1)
-print("test end");
+this_dir = os.path.split(sys.argv[0])[0] 
+dm_ret = op.SetPath(this_dir)
+op_ret = op.SetDict(0, "dm_soft.txt")
+finded = False
 
+def attack():
+    global lock
+    while True:
+        lock.acquire()
+        co = op.FindStr(310, 110, 1100, 700, "贼偷", "fd7024-151515", 0.8)
+        if co[1]<0:
+            co=op.FindPic(310, 110, 1100, 700,"zeitou.bmp","101010",0.8,0);
+        elif co[1]>0:
+            print("Find Monster In:",co[1], co[2])
+            dd_dll.DD_mov(co[1]+16, co[2]+55)
+            time.sleep(0.1)
+            dd_dll.DD_btn(1)
+            dd_dll.DD_btn(2)
+            co = op.FindStr(310, 110, 1100, 700, "贼偷", "fd7024-151515", 0.8)
+            if co[1]<0:
+                co=op.FindPic(310, 110, 1100, 700,"zeitou.bmp","101010",0.8,0);
+            dd_dll.DD_mov(co[1]+16, co[2]+55)
+            time.sleep(0.1)
+            dd_dll.DD_btn(1)
+            dd_dll.DD_btn(2)
+            time.sleep(9)
+            lock.release()
+            time.sleep(1)
+        if co[1]<0:
+            lock.release()
+            time.sleep(1)
+
+    
+    
+
+def search():
+    global lock
+    while True:
+        lock.acquire()
+        print("Searching Monsteres...")
+        dd_dll.DD_mov(960,540)
+        dd_dll.DD_btn(1)
+        dd_dll.DD_btn(2)
+        dd_dll.DD_movR(20,0)
+        dd_dll.DD_btn(1)
+        dd_dll.DD_btn(2)
+        dd_dll.DD_btn(1)
+        dd_dll.DD_btn(2)
+        lock.release()
+        time.sleep(3)
+if __name__ == "__main__":
+    lock = threading.Lock()
+    T1 = threading.Thread(target=attack, name="T1")
+    T2 = threading.Thread(target=search, name="T2")
+    T1.start()
+    T2.start()

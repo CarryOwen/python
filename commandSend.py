@@ -6,7 +6,7 @@ from ctypes import c_ulong, windll, byref
 from ctypes.wintypes import HWND, POINT
 from serial.serialwin32 import Serial
 getMousePos=windll.user32.GetCursorPos
-portx = "COM5"
+portx = "COM3"
 bps = 115200
 timex = 5
 VkCode = {
@@ -144,12 +144,12 @@ def mouseMovesend(x:int,y:int,time_s=0.1):
             remainder=strTobytes("%02x"%(result_x[1]+1))
         else:
             remainder=strTobytes("%02x"%(result_x[1]))
-        # print("remainder:",remainder)
+        print("remainder:%d",remainder)
         ser.write(remainder)
         ser.write(b'\x00')
         ser.write(b'\x2e')
         time.sleep(0.1)
-    elif x-po.x<0:              #左移
+    elif x-po.x<=0:              #左移
         result_x=divmod(po.x-x,127)
         print("左移-result:",result_x[0],result_x[1])
         for item in range(result_x[0]):
@@ -190,7 +190,7 @@ def mouseMovesend(x:int,y:int,time_s=0.1):
         ser.write(remainder)
         ser.write(b'\x2e')
         time.sleep(0.1)
-    elif y-po.y<0:              #上移
+    elif y-po.y<=0:              #上移
         result_y=divmod(po.y-y,127)
         print("上移-result:",result_y[0],result_y[1])
         for item in range(result_y[0]):
@@ -236,5 +236,26 @@ def mouseRightclick():
     time.sleep(0.05)
     ser.write(b'\x2e')
 if __name__ == "__main__":
-    mouseMovesend(1,0)
+    # mouseMovesend(7,0)
+    po=POINT()
+    getMousePos(byref(po)) #获取当前鼠标位置
+    print("MOUSE_POS:",po.x,po.y)
+    ser = serial.Serial(portx, bps, timeout=timex)
+    time.sleep(0.05)
+    ser.write(b'\x02\xf0\x03')
+    ser.write(b'\x00\x81\x00')
+    ser.write(b'\x2e')
+    time.sleep(0.05)
+    ser.write(b'\x02\xf0\x03')
+    ser.write(b'\x00')
+    ser.write(b'\x11')
+    ser.write(b'\x00')
+    ser.write(b'\x2e')
+    time.sleep(2)
+    po1=POINT()
+    getMousePos(byref(po1)) #获取当前鼠标位置
+    print("MOUSE_POS NOW:",po1.x,po1.y)
+
+
+    # mouseLeftclick()
 
