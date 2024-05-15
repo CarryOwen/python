@@ -29,7 +29,7 @@ class Demo:
         print("child hwnd:",self.send_hwnd);
         return 0;
 
-    def test_bkmode(self):
+    def test_bkmode(self): 
         r=self.op.BindWindow(self.hwnd,"gdi","normal","normal",0);
         if r == 0:
             print("bind false");

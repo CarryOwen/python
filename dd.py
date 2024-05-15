@@ -3,7 +3,7 @@ from ctypes import *
 import time
 from win32com.client import Dispatch
 import time
-import commandSend as mouse
+
 import sys, os
 print("Load DD!")
 
